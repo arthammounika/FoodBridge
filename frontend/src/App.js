@@ -138,12 +138,20 @@ function Request() {
     } catch (err) { console.error("Error submitting request:", err); }
   };
 
+  const handleRemoveOldest = async () => {
+    try {
+      await axios.delete("http://localhost:5000/requests/oldest");
+      fetchRequests(); // refresh list after deletion
+    } catch (err) { console.error("Error removing oldest request:", err); }
+  };
+
   const handleChange = (e) => { setFormData({ ...formData, [e.target.name]: e.target.value }); };
 
   return (
     <Container className="mt-5">
       <h2 className="text-center mb-4">Request for Food</h2>
-      <form onSubmit={handleSubmit} className="p-4 bg-light rounded shadow mb-5">
+
+      <form onSubmit={handleSubmit} className="p-4 bg-light rounded shadow mb-3">
         <input className="form-control mb-2" placeholder="Name" name="name" value={formData.name} onChange={handleChange} required />
         <input className="form-control mb-2" placeholder="Address" name="address" value={formData.address} onChange={handleChange} required />
         <input className="form-control mb-2" placeholder="Food Type" name="foodType" value={formData.foodType} onChange={handleChange} required />
@@ -151,6 +159,13 @@ function Request() {
         <input className="form-control mb-2" placeholder="Mobile" name="mobile" value={formData.mobile} onChange={handleChange} required />
         <Button type="submit" variant="primary" className="w-100">Submit Request</Button>
       </form>
+
+      {/* Remove Oldest Request Button */}
+      {requests.length > 0 && (
+        <Button variant="danger" className="mb-3 w-100" onClick={handleRemoveOldest}>
+          Remove Oldest Request
+        </Button>
+      )}
 
       <h3 className="text-center mb-4">📋 Recent Food Requests</h3>
       <div className="d-flex flex-wrap gap-3 justify-content-center">

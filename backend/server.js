@@ -110,6 +110,18 @@ app.post("/contacts", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// --- Delete the oldest (first entered) food request ---
+app.delete("/requests/oldest", async (req, res) => {
+  try {
+    const oldestRequest = await Request.findOne().sort({ createdAt: 1 }); // oldest first
+    if (!oldestRequest) return res.status(404).json({ message: "No requests found" });
+
+    await Request.deleteOne({ _id: oldestRequest._id });
+    res.json({ message: "Oldest request removed", deleted: oldestRequest });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // -------------------- SERVER START --------------------
 const PORT = process.env.PORT || 5000;
